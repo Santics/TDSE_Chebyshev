@@ -2,16 +2,17 @@
 #define DATA_STRUCTURE
 
 #define N 1000  //numbers of discretization samples
+#include<complex.h>
 
 /*Data Structure No.1 State*/
 
 typedef struct			//representation of discrete wavefunction
 
 {
-	data[N*N] wavefunction;
+	complex double data[N*N] wavefunction;
 }State; 			
 
-void wavefunction_init(double[][] init_state,State* state)			//map wavefunction from 2-dimensional array to a vector
+void wavefunction_init(complex double[][] init_state,State* state)			//map wavefunction from 2-dimensional array to a vector
 {
 	int i,j;
 	for(i=0;i<N;i++)
@@ -27,7 +28,7 @@ void wavefunction_init(double[][] init_state,State* state)			//map wavefunction 
 
 typedef struct	Operator		//representation of operators considering it is usually a sparse matrix
 {
-	double data;
+	complex double data;
 	int column;
 	Operator* next;
 }Operator;
@@ -52,7 +53,7 @@ void operator_init(Operator_head* operator)       //init an operator with all el
 double matrix_normalization(Operator_head* operator) //normalize the matrix with norm and return the norm in roder to compensate in time
 {
 	Operator* op_ptr=NULL;
-	double norm=0,sum=0;
+	complex double norm=0,sum=0;
 	int i=0;
 
 	for(i=0;i<N*N;i++)
@@ -63,7 +64,7 @@ double matrix_normalization(Operator_head* operator) //normalize the matrix with
 			sum += op_ptr->data;
 			op_ptr = op_ptr->next;
 		}
-		norm = norm>sum?norm:sum;
+		norm = creal(norm)>creal(sum)?creal(norm):creal(sum);
 	}
 
 	for(i=0;i<N*N;i++)
@@ -79,11 +80,11 @@ double matrix_normalization(Operator_head* operator) //normalize the matrix with
 	return norm;
 }
 
-/*codes of the following function sucks due to the foolish design of data structure "operator head"
+/*codes of the following function sucks due to the stupid design of data structure "operator head"
  I should have let the head node the same as data node in case I would not have wasted so much time handling the first node
  however,considering I have finished this function as well as my lazy nature,I would not bother recoding them if it do not cause any tr--ouble*/
 
-void element_append(Operator_head* operator,double data,int row,int column) //auxiliary function to append matrix element to an operator
+void element_append(Operator_head* operator,complex double data,int row,int column) //auxiliary function to append matrix element to an operator
 {
 	Operator* op_ptr=operator[row]->next,op_ptr_pre=operator[row]->next;		//Caution:row&column range from 0 to N-1 !!
 	Operator* op_append=NULL;
@@ -179,11 +180,30 @@ void operator_sum(Operator_head* operator1,Operator_head* operator2)	//sum of tw
 		}
 	}
 }
-
-void oprtator_on_state(Operator_head* operator,State state)	//as its name suggests,update state without perserving the previous one
+void  operator_on_number(Operator_head operator,complex double number)
 {
 	int i;
-	double sum;
+	Operator* operator_node;
+
+	for(i=0;i<N*N;i++)
+	{
+		operator_node=operator[i]->next;
+		while(operator_node!=NULL)
+		{
+			operator_node->data *= number;
+			operator_node=operator_node->next;
+		}
+	}
+
+	return;
+}
+
+
+State* oprtator_on_state(Operator_head* operator,State* state)	
+{
+	int i;
+	complex double sum;
+	State* state_tmp;
 	Operator* operator_node;
 
 	while(i=0;i<N*N;i++)
@@ -195,6 +215,70 @@ void oprtator_on_state(Operator_head* operator,State state)	//as its name sugges
 			sum += operator_node->data*state->wavefunction[i*N+operator_node->column];
 			operator_node=operator_node->next;
 		}
-		state->wavefunction[i]=sum;
+		state_tmp->wavefunction[i]=sum;
 	}
+
+	return state_tmp;
 }
+
+Operator_head* operator_transpose(Operator_head* operator)   //this function is designed to simplify operator_on_operator function below
+{
+	int i,j;
+	Operator operator_node;
+	Operator_head operator_tmp[N*N];
+
+	operator_init(operator_tmp);
+
+	for(i=0;i<N*N;i++)
+	{
+		operator_node = operator[i]->next;
+		while(operator_node!=NULL)
+		{
+			element_append(operator_tmp,operator_node->data,operator_column,i);
+		}
+	}
+
+	return operator_tmp;
+}
+
+
+Operator_head* operator_on_operator(Operator_head* operator1,Operator_head* operator2)
+{
+	int i,j;
+	complex double sum;
+	Operator_head operator_tmp1[N*N],operator_tmp2[N*N];
+
+	Operator operator_node1,operator_node2;
+
+	operator_init(operator_tmp1);
+	operator_init(operator_tmp2);
+
+	operator_tmp1=operator_transpose(operator2);
+
+
+	for(i=0;i<N*N;i++)
+	{
+		for(j=0;j<N*N;j++)
+		{
+			operator_node1=operator1[i]->next;
+			operator_node2=operator_tmp1[j]->next;
+			sum=0;
+			while(operator_node1!=NULL&&operator_node2!=NULL)
+			{
+				if(operator_node1->column==operator_node2->column)
+					sum+=operator_node1->data*operator_node2->data;
+				else if(operator_node1->column>operator_node1->column)
+					operator_node1=operator_node1->next;
+				else if(operator_node2->column>operator_node2->column)
+					operator_node2=operator_node2->next;
+				if(sum!=0)
+					element_append(operator_tmp2,sum,i,j);
+			}
+		}
+	}
+
+	return operator_tmp2;
+}
+
+
+#endif

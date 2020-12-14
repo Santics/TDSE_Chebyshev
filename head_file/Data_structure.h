@@ -50,6 +50,58 @@ void operator_init(Operator_head* operator)       //init an operator with all el
 	return;
 }
 
+void operator_init_I(Operator* operator,complex double x)
+{
+	int i;
+	Operator* operator_node;
+
+	for(i=0;i<N;i++)
+	{
+		operator_node = (Operator*)malloc(sizeof(Operator));
+		operator_node->data=x;
+		operator_node->column=i;
+		operator_node->next=NULL;
+
+		operator[i]->next=operator_node;
+	}
+
+	return;
+}
+
+void operator_set_null(Operator_head* operator)		//set all elements of an existing operator to zero
+{
+	int i;
+	Operator* operator_node,operator_node_tmp;
+
+	while(i=0;i<N*N;i++)
+	{
+		operator_node=operator[i]->next;
+		while(operator_node!=NULL)
+		{
+			operator_tmp=operator_node->next;
+			free(operator_node);
+			operator_node=operator_tmp;
+		}
+
+		return;
+	}
+}
+
+void operator_transmission(Operator_head* operator_a,Operator_head* operator_b)
+{
+	int i;
+
+	operator_set_null(operator_b);
+
+	for(i=0;i<N*N;i++)
+	{
+		operator_b[i]->next=operator_a[i]->next;
+		operator_a[i]->next=NULL;
+	}
+
+	return;
+}
+
 double matrix_normalization(Operator_head* operator) //normalize the matrix with norm and return the norm in roder to compensate in time
 {
 	Operator* op_ptr=NULL;
@@ -203,7 +255,7 @@ State* oprtator_on_state(Operator_head* operator,State* state)
 {
 	int i;
 	complex double sum;
-	State* state_tmp;
+	State state_tmp;
 	Operator* operator_node;
 
 	while(i=0;i<N*N;i++)
@@ -215,7 +267,7 @@ State* oprtator_on_state(Operator_head* operator,State* state)
 			sum += operator_node->data*state->wavefunction[i*N+operator_node->column];
 			operator_node=operator_node->next;
 		}
-		state_tmp->wavefunction[i]=sum;
+		state_tmp.wavefunction[i]=sum;
 	}
 
 	return state_tmp;

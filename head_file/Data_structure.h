@@ -1,7 +1,12 @@
 #ifndef DATA_STRUCTURE
 #define DATA_STRUCTURE
 
+#define Delta 0.01	//space interval
+#define H 6.62606957e-34  //planck constant
+#define Pi 3.1415926535
+#define M 1e10-34 //mass
 #define N 1000  //numbers of discretization samples
+
 #include<complex.h>
 
 /*Data Structure No.1 State*/

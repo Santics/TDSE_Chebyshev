@@ -14,10 +14,10 @@
 typedef struct			//representation of discrete wavefunction
 
 {
-	complex double data[N*N] wavefunction;
+	complex double wavefunction[N*N];
 }State; 			
 
-void wavefunction_init(complex double[][] init_state,State* state)			//map wavefunction from 2-dimensional array to a vector
+void wavefunction_init(complex double[N][] init_state,State* state)			//map wavefunction from 2-dimensional array to a vector
 {
 	int i,j;
 	for(i=0;i<N;i++)
@@ -35,7 +35,7 @@ typedef struct	Operator		//representation of operators considering it is usually
 {
 	complex double data;
 	int column;
-	Operator* next;
+	struct Operator* next;
 }Operator;
 
 typedef struct Operator_head		//choose linklist to represent an operator,set a head for them to save storage resources
@@ -49,7 +49,7 @@ void operator_init(Operator_head* operator)       //init an operator with all el
 	int i;
 	for(i=0;i<N*N;i++)
 	{
-		operator[i] -> next = NULL;
+		operator+i -> next = NULL;
 	}
 
 	return;

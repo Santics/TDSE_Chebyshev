@@ -7,7 +7,6 @@
 #include"Data_structure.h"
 #include"Bessel.h"
 
-void bessel_function(int n,complex double[] a);
 
 Operator_head* hamiltonian_init(Operator_head* potential,int barriar_index,int slit_index[])
 {
@@ -45,8 +44,9 @@ Operator_head* hamiltonian_init(Operator_head* potential,int barriar_index,int s
 Operator_head* chebyshev_polynomial_approximation(Operator_head* hamiltonian,complex double evolution_time,complex double[] bessel_function,int num_of_term)
 {
 	complex double norm,contsant=2,factor;
-	int i;
+	int i,Jn_larger_than_this_zero;
 	complex double bessel_function[num_of_term];
+	double bessel_function_Jn[M]={0};
 	Operator_head* time_evolution_operator,Tn_plus_1;
 	Opeator_head  U[N*N],Tn[N*N],Tn_minus_1[N*N],T_tmp[N*N];
 
@@ -55,17 +55,17 @@ Operator_head* chebyshev_polynomial_approximation(Operator_head* hamiltonian,com
 	norm=matrix_normalization(hamiltonian);
 	evolution_time*=norm;
 
-	Bessel_function(bessel_function,evolution_time,num_of_term);
+	Jn_larger_than_this_zero=Bessel_function(evolution_time,bessel_function_Jn,M);
 
 
 	operator_init_I(U,bessel_function[0]);
 	operator_init_I(Tn_minus_1,bessel_function[0]);
 	operator_sum(Tn,hamiltonian);
 
-	for(i=1;i<num_of_term;i++)
+	for( i=1; i < (num_of_term>Jn_larger_than_this_zero?num_of_term:Jn_larger_than_this_zero); i++ )
 	{
 		constant*=-I;
-		factor=constant*bessel_function[i];
+		factor=constant*bessel_function_Jn[i];
 
 		//append Tn to the approximation result
 		operator_set_null(T_tmp);

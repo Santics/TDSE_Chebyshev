@@ -5,7 +5,7 @@
 #define H 6.62606957e-34  //planck constant
 #define Pi 3.1415926535
 #define MASS 1e10-34 //mass
-#define N 1000  //numbers of discretization samples
+#define N 50  //numbers of discretization samples
 
 #include<stdio.h>
 #include<malloc.h>
@@ -22,7 +22,7 @@ typedef struct			//representation of discrete wavefunction
 	complex double wavefunction[N*N];
 }State; 			
 
-void wavefunction_init(complex double init_state[][N],State* state)			//map wavefunction from 2-dimensional array to a vector
+void wavefunction_initial(complex double init_state[][N],State* state)		//map wavefunction from 2-dimensional array to a vector
 {
 	int i,j;
 	for(i=0;i<N;i++)
@@ -92,6 +92,7 @@ void operator_set_null(Operator_head* operator)		//set all elements of an existi
 			free(operator_node);
 			operator_node=operator_node_tmp;
 		}
+		(operator+i)->next = NULL;
 
 		return;
 	}
@@ -261,7 +262,7 @@ void  operator_on_number(Operator_head *operator,complex double number)
 }
 
 
-void operator_on_state(Operator_head* operator,State* state,State *state_tmp)	
+void operator_on_state(Operator_head* operator,State *state,State *state_tmp)	
 {
 	int i;
 	complex double sum;
@@ -324,13 +325,13 @@ void operator_on_operator(Operator_head* operator1,Operator_head* operator2,Oper
 			{
 				if(operator_node1->column==operator_node2->column)
 					sum+=operator_node1->data*operator_node2->data;
-				else if(operator_node1->column>operator_node1->column)
-					operator_node1=operator_node1->next;
-				else if(operator_node2->column>operator_node2->column)
+				else if(operator_node1->column>operator_node2->column)
 					operator_node2=operator_node2->next;
-				if(sum!=0)
-					element_append(operator_tmp2,sum,i,j);
+				else if(operator_node2->column>operator_node1->column)
+					operator_node1=operator_node1->next;
 			}
+			if(sum!=0)
+				element_append(operator_tmp2,sum,i,j);
 		}
 	}
 

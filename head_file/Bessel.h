@@ -2,7 +2,7 @@
 #define BESSEL
 
 #define EPSILON 1e-18
-#define M 1000
+#define M 300
 
 #include<math.h>
 

@@ -87,13 +87,12 @@ void chebyshev_polynomial_approximation(Operator_head* hamiltonian,complex doubl
 
 }
 
-State* time_evolution_process(Operator_head* U,State *wavefunction_init)
+void time_evolution_process(Operator_head* U,State *wavefunction_init,State *state)
 {
-	State* state;
 
 	operator_on_state(U,wavefunction_init,state);
 
-	return state;
+	return ;
 }
 
 #endif

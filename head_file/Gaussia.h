@@ -4,12 +4,11 @@
 #include"Data_structure.h"
 #include<math.h>
 
-State* Gaussia_Wave_Packet_Init(int sigmax,int sigmay,int center_x0,int center_y0,double wave_vector)
+void  Gaussia_Wave_Packet_Init(int sigmax,int sigmay,int center_x0,int center_y0,double wave_vector,State *state)
 {
 	double normalization_const=1/sqrt(2*Pi*sigmax*Delta*sigmay*Delta);
 	complex double wavefunction[N][N]={0};
 	int x,y;
-	State *state;
 
 	for(x=0;x<N;x++)
 	{
@@ -30,9 +29,9 @@ State* Gaussia_Wave_Packet_Init(int sigmax,int sigmay,int center_x0,int center_y
 		}
 	}
 
-	wavefunction_init(wavefunction,state);
+	wavefunction_initial(wavefunction,state);
 
-	return state;
+	return ;
 }
 
 #endif

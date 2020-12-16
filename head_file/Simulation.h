@@ -1,21 +1,16 @@
 #ifndef SIMULATION
 #define SIMULATION
-#define Delta 0.01
-#define H 6.62606957e-34
-#define Pi 3.1415926535
-#define M 1e10-34
+
 #include"Data_structure.h"
 #include"Bessel.h"
 
 
-Operator_head* hamiltonian_init(Operator_head* potential,int barriar_index,int slit_index[])
+void hamiltonian_init(Operator_head* potential,int barriar_index,int slit_index[],Operator_head *operator)
 {
-	complex double constant=(H/(2*Pi))*(H/(2*Pi))/(M*Delta*Delta);
+	complex double constant=(H/(2*Pi))*(H/(2*Pi))/(MASS*Delta*Delta);
 	int i,j;
 	bool insert=0;
 
-	Operator_head operator[N*N];
-	operator_init(operator);
 
 	operator_sum(operator,potential);
 
@@ -33,23 +28,24 @@ Operator_head* hamiltonian_init(Operator_head* potential,int barriar_index,int s
 				}
 			}
 			if(insert)
-				element_append(operator,-constant,i,j)
+				element_append(operator,-constant,i,j);
 		}
 	}
 
-	return operator;
+	return ;
 }
 
 //approximate time evolution operator by chebyshev polynomial
-Operator_head* chebyshev_polynomial_approximation(Operator_head* hamiltonian,complex double evolution_time,complex double[] bessel_function,int num_of_term)
+void chebyshev_polynomial_approximation(Operator_head* hamiltonian,complex double evolution_time,int num_of_term,Operator_head *time_evolution_operator)
 {
-	complex double norm,contsant=2,factor;
+	complex double norm,constant=2,factor;
 	int i,Jn_larger_than_this_zero;
 	complex double bessel_function[num_of_term];
 	double bessel_function_Jn[M]={0};
-	Operator_head* time_evolution_operator,Tn_plus_1;
-	Opeator_head  U[N*N],Tn[N*N],Tn_minus_1[N*N],T_tmp[N*N];
+	Operator_head Tn_plus_1[N*N];
+	Operator_head  U[N*N],Tn[N*N],Tn_minus_1[N*N],T_tmp[N*N];
 
+	operator_init(Tn_plus_1);
 	operator_init(time_evolution_operator);
 	operator_init(T_tmp);
 	norm=matrix_normalization(hamiltonian);
@@ -75,8 +71,8 @@ Operator_head* chebyshev_polynomial_approximation(Operator_head* hamiltonian,com
 
 		//calculate Tn+1
 		operator_set_null(Tn_plus_1);
-		Tn_plus_1=operator_on_operator(hamiltonian,Tn);
-		operatir_on_number(Tn_plus_1,2);
+		operator_on_operator(hamiltonian,Tn,Tn_plus_1);
+		operator_on_number(Tn_plus_1,2);
 		operator_on_number(Tn_minus_1,-1);
 		operator_sum(Tn_plus_1,Tn_minus_1);
 
@@ -87,15 +83,15 @@ Operator_head* chebyshev_polynomial_approximation(Operator_head* hamiltonian,com
 	}
 
 
-	return time_evolution_operator;
+	return ;
 
 }
 
-State* time_evolution_process(Operator_head* U,State wavefunction_init)
+State* time_evolution_process(Operator_head* U,State *wavefunction_init)
 {
-	State state;
+	State* state;
 
-	state=operator_on_state(U,wavefunction_init);
+	operator_on_state(U,wavefunction_init,state);
 
 	return state;
 }

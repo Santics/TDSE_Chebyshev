@@ -6,7 +6,7 @@
 
 #include<math.h>
 
-int BesselJ(double x , double *Jn , int m , int m0);
+int Bessel_function(double x , double *Jn , int m0);
 int normalize(double *Jn,int m0);
 void rescale(double *Jn , int m0);
 
@@ -26,7 +26,7 @@ int normalize(double *Jn,int m0)
         for(tmp = 0 ; tmp < m0 ; tmp++)
         {
                 Jn[tmp] = Jn[tmp]/sum;
-                if(abs(Jn[tmp])<EPSILON)
+                if(fabs(Jn[tmp])<EPSILON)
                 {
                         zero = tmp;
                         for(;tmp < m0;tmp++)
@@ -51,7 +51,7 @@ void rescale(double *Jn,int m0)
 //*Jn:array to store the value of Jn(x)
 //m:the result to be returned , if n>m , we set Jn(x)=0 for it is fairly small
 //m0:I forgot why I would set this input , do not bother to understand it here because I simply let it be M of all time
-int BesselJ(double x , double *Jn , int m0)  
+int Bessel_function(double x , double *Jn , int m0)  
 {
         int tmp = 0;
 	int m=0;
@@ -63,7 +63,7 @@ int BesselJ(double x , double *Jn , int m0)
         for(tmp = 2 ; tmp <= m0 ; tmp++)
         {
                 Jn[m0-tmp] = 2*(m0-tmp+1)*Jn[m0-tmp+1]/x-Jn[m0-tmp+2];
-                if(abs(Jn[m0-tmp])*EPSILON > 1)
+                if(fabs(Jn[m0-tmp])*EPSILON > 1)
                         rescale(Jn,tmp+1);
         }
         m = normalize(Jn,m0);

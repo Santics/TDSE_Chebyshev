@@ -40,7 +40,7 @@ void chebyshev_polynomial_approximation(Operator_head* hamiltonian,complex doubl
 {
 	complex double norm,constant=2,factor;
 	int i,Jn_larger_than_this_zero;
-	complex double bessel_function[num_of_term];
+	complex double bessel_function[M];
 	double bessel_function_Jn[M]={0};
 	Operator_head Tn_plus_1[N*N];
 	Operator_head  U[N*N],Tn[N*N],Tn_minus_1[N*N],T_tmp[N*N];
@@ -48,6 +48,7 @@ void chebyshev_polynomial_approximation(Operator_head* hamiltonian,complex doubl
 	operator_init(Tn_plus_1);
 	operator_init(time_evolution_operator);
 	operator_init(T_tmp);
+	operator_init(Tn);
 	norm=matrix_normalization(hamiltonian);
 	evolution_time*=norm;
 

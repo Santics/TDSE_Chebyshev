@@ -56,7 +56,7 @@ int main()
 	operator_on_number(hamiltonian,0.23);
 	//operator_set_null(hamiltonian);
 	//operator_transmission(hamiltonian2,hamiltonian);
-	operator_on_operator(hamiltonian,hamiltonian2,hamiltonian3);
+	operator_on_operator(hamiltonian,hamiltonian3,hamiltonian2);
 	
 
 	printf("%ld %ld %ld\n",sizeof(operator_node),sizeof(operator_node2),sizeof(operator));

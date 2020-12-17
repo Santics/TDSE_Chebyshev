@@ -5,7 +5,7 @@
 #define H 6.62606957e-34  //planck constant
 #define Pi 3.1415926535
 #define MASS 1e10-34 //mass
-#define N 50  //numbers of discretization samples
+#define N 300  //numbers of discretization samples
 
 #include<stdio.h>
 #include<malloc.h>
